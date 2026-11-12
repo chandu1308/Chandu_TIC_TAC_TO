@@ -1,38 +1,31 @@
-const Board = ({ gameState, onCellClicked, isGameEnded }) => {
+const Board = ({ cells, winningLine, onCellClicked, isGameEnded }) => {
   return (
-    <>
-      <p>
-        Current Player: <b>{gameState.currentPlayer}</b>
-      </p>
-      <div
-        style={{
-          display: "inline-grid",
-          gridTemplateRows: "1fr 1fr 1fr",
-          gridTemplateColumns: "1fr 1fr 1fr",
-          pointerEvents: isGameEnded ? "none" : "auto",
-        }}
-      >
-        {gameState.cells.map((cell, i) => (
-          <div
-            style={{
-              width: "100px",
-              height: "100px",
-              border: "1px solid #000",
-              cursor: "pointer",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onClick={() => {
-              onCellClicked(i);
-            }}
-            key={i.toString()}
+    <div className="game-board" role="group" aria-label="Tic-Tac-Toe game board">
+      {cells.map((cell, index) => {
+        const isWinningCell = winningLine.includes(index);
+        const label = cell
+          ? `Square ${index + 1}, ${cell.toUpperCase()}${isWinningCell ? ", part of winning line" : ""}`
+          : `Square ${index + 1}, empty`;
+
+        return (
+          <button
+            aria-label={label}
+            aria-disabled={Boolean(cell || isGameEnded)}
+            className={[
+              "game-cell",
+              cell ? `game-cell--${cell}` : "",
+              isWinningCell ? "game-cell--winner" : "",
+            ].filter(Boolean).join(" ")}
+            disabled={Boolean(cell || isGameEnded)}
+            key={index}
+            onClick={() => onCellClicked(index)}
+            type="button"
           >
-            {cell}
-          </div>
-        ))}
-      </div>
-    </>
+            {cell === "x" ? <span aria-hidden="true">×</span> : cell === "o" ? <span aria-hidden="true">○</span> : null}
+          </button>
+        );
+      })}
+    </div>
   );
 };
 
